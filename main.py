@@ -19,7 +19,7 @@ class AFK_Kick_Window:
         self.title = tk.Label(self.title_frame, text="Anti AFK Tool", font=("Rubrik", 25), bg="black", fg="white")
         self.title.pack()
 
-        self.keyboard_control_button = tk.Button(self.main_frame, text="Keyboard Input", font=("Rubrik", 20), width=12)
+        self.keyboard_control_button = tk.Button(self.main_frame, text="Keyboard Input", font=("Rubrik", 20), width=12, command=self.keyboard_control_window)
         self.keyboard_control_button.grid(row=0, column=0, padx=5, pady=5)
 
         self.mouse_control_button = tk.Button(self.main_frame, text="Mouse Input", font=("Rubrik", 20), width=12, command=self.mouse_control_window)
@@ -32,7 +32,66 @@ class AFK_Kick_Window:
         self.root.resizable(0, 0)
         self.root.config(bg="black")
 
+    def keyboard_control_window(self):
+        """Open a mouse control window with options to control mouse movement and input"""
+        keyboard_window = tk.Toplevel()
+        keyboard_window.title("Keyboard Control")
+        keyboard_window.geometry("450x380")
+        keyboard_window.resizable(0, 0)
+        keyboard_window.config(bg="black")
+
+        self.let_var_1 = tk.StringVar()
+        self.let_var_1.trace('w', self.validate)
+        self.let_var_2 = tk.StringVar()
+        self.let_var_2.trace('w', self.validate)
+        self.let_var_3 = tk.StringVar()
+        self.let_var_3.trace('w', self.validate)
+        self.let_var_4 = tk.StringVar()
+        self.let_var_4.trace('w', self.validate)
+
+        title_frame = tk.Frame(keyboard_window)
+        title_frame.pack()
+
+        main_frame = tk.Frame(keyboard_window, bg="black")
+        main_frame.pack(pady=5)
+
+        tk.Label(main_frame, text="Enter up to 4 keyboard inputs to loop", font=("Rubrik", 18), bg="black", fg="white").pack(padx=2, pady=2)
+
+        entry_frame = tk.Frame(main_frame, bg="black")
+        entry_frame.pack(padx=5, pady=5)
+
+        entry_1 = tk.Entry(entry_frame, font=("Rubrik", 10), textvariable=self.let_var_1)
+        entry_1.grid(row=0, column=0, padx=4, pady=4)
+
+        entry_2 = tk.Entry(entry_frame, font=("Rubrik", 10), textvariable=self.let_var_2)
+        entry_2.grid(row=0, column=1, padx=4, pady=4)
+
+        entry_3 = tk.Entry(entry_frame, font=("Rubrik", 10), textvariable=self.let_var_3)
+        entry_3.grid(row=1, column=0, padx=4, pady=4)
+
+        entry_4 = tk.Entry(entry_frame, font=("Rubrik", 10), textvariable=self.let_var_4)
+        entry_4.grid(row=1, column=1, padx=4, pady=4)
+
+        loop_button = tk.Button(main_frame, text="Loop Inputs", font=("Rubrik", 15))
+        loop_button.pack(padx=5, pady=10)
+
+        title = tk.Label(title_frame, text="Keyboard Control", font=("Rubrik", 25), bg="black", fg="white")
+        title.pack()
+
+    def validate(self, *args):
+        """Validate the entry box to see if it is longer than 1 character, or not an alpha character;
+        if it is either, reset the entry to contain 1 character (or no character if invalid)."""
+        if len(self.let_var_1.get()) > 1:
+            self.let_var_1.set(self.let_var_1.get()[:1])
+        if len(self.let_var_2.get()) > 1:
+            self.let_var_2.set(self.let_var_2.get()[:1])
+        if len(self.let_var_3.get()) > 1:
+            self.let_var_3.set(self.let_var_3.get()[:1])
+        if len(self.let_var_4.get()) > 1:
+            self.let_var_4.set(self.let_var_4.get()[:1])
+
     def mouse_control_window(self):
+        """Open a mouse control window with options to control mouse movement and input"""
         mouse_window = tk.Toplevel()
         mouse_window.title("Mouse Control")
         mouse_window.geometry("450x380")
@@ -80,7 +139,8 @@ class AFK_Kick_Window:
 
         mouse_window.mainloop()
 
-    def move_mouse(self, direction):
+    def move_mouse(self, direction: str):
+        """Move the mouse depending on the direction variable passed"""
         if direction == "UP":
             while True:
                 pyautogui.move(0, -100)
@@ -95,11 +155,13 @@ class AFK_Kick_Window:
                 pyautogui.move(-100, 0)
 
     def thread_move(self, direction):
+        """Thread the move function, waiting 5 seconds before doing so"""
         time.sleep(5)
         thread = threading.Thread(target=self.move_mouse(direction))
         thread.start()
 
     def auto_click(self, num_clicks):
+        """autoclick with the passed number of clicks"""
         while True:
             for i in range(num_clicks):
                 pyautogui.click()
