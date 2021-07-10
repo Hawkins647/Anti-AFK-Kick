@@ -2,6 +2,7 @@ import tkinter as tk
 import pyautogui
 import threading
 import time
+import pydirectinput
 
 
 class AFK_Kick_Window:
@@ -36,7 +37,7 @@ class AFK_Kick_Window:
         """Open a mouse control window with options to control mouse movement and input"""
         keyboard_window = tk.Toplevel()
         keyboard_window.title("Keyboard Control")
-        keyboard_window.geometry("450x380")
+        keyboard_window.geometry("450x280")
         keyboard_window.resizable(0, 0)
         keyboard_window.config(bg="black")
 
@@ -60,6 +61,9 @@ class AFK_Kick_Window:
         entry_frame = tk.Frame(main_frame, bg="black")
         entry_frame.pack(padx=5, pady=5)
 
+        time_frame = tk.Frame(main_frame, bg="black")
+        time_frame.pack(padx=5, pady=5)
+
         entry_1 = tk.Entry(entry_frame, font=("Rubrik", 10), textvariable=self.let_var_1)
         entry_1.grid(row=0, column=0, padx=4, pady=4)
 
@@ -72,11 +76,23 @@ class AFK_Kick_Window:
         entry_4 = tk.Entry(entry_frame, font=("Rubrik", 10), textvariable=self.let_var_4)
         entry_4.grid(row=1, column=1, padx=4, pady=4)
 
-        loop_button = tk.Button(main_frame, text="Loop Inputs", font=("Rubrik", 15))
-        loop_button.pack(padx=5, pady=10)
+        loop_button = tk.Button(main_frame, text="Loop Inputs", font=("Rubrik", 15), width=15, command=lambda: self.thread_loop_inputs(entry_1.get(), entry_2.get(), entry_3.get(), entry_4.get()))
+        loop_button.pack(padx=5, pady=5)
 
         title = tk.Label(title_frame, text="Keyboard Control", font=("Rubrik", 25), bg="black", fg="white")
         title.pack()
+
+        tk.Label(keyboard_window, text="Inputs will Begin after 5 seconds, touch corner of screen to disable", font=("Rubrik", 10), bg="black", fg="white").pack(side=tk.BOTTOM)
+
+    def thread_loop_inputs(self, ent1, ent2, ent3, ent4):
+        time.sleep(5)
+        thread = threading.Thread(target=lambda: self.loop_inputs(ent1, ent2, ent3, ent4))
+        thread.start()
+
+    def loop_inputs(self, *args):
+        while True:
+            for arg in args:
+                pydirectinput.press(arg)
 
     def validate(self, *args):
         """Validate the entry box to see if it is longer than 1 character, or not an alpha character;
